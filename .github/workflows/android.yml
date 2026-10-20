@@ -27,8 +27,14 @@ jobs:
       - name: Build web bundle
         run: npm run web:build
 
+      - name: Add Android back-button handler
+        run: |
+          cp android-shell/back-handler.js build/web/back-handler.js
+          sed -i 's#</body>#<script src="back-handler.js"></script></body>#' build/web/index.html
+          grep -q back-handler.js build/web/index.html
+
       - name: Install Capacitor (not saved to package.json)
-        run: npm install --no-save @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7
+        run: npm install --no-save @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7 @capacitor/app@7
 
       - name: Create Android project
         run: |
