@@ -38,13 +38,23 @@ jobs:
           grep -q native-shell.js build/web/index.html
           grep -q back-handler.js build/web/index.html
 
-      - name: Install Capacitor (not saved to package.json)
-        run: npm install --no-save @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7 @capacitor/app@7 @capacitor/splash-screen@7 @capacitor/filesystem@7 @capacitor/share@7
+      # Plugins MUST be listed in package.json: `cap sync` finds plugins there, and silently
+      # skips anything installed with --no-save (that is why App, Filesystem and Share were
+      # missing from the APK). This only changes the CI runner's copy, not the repository.
+      - name: Install Capacitor plugins (CI copy of package.json only)
+        run: npm install --save-dev --no-package-lock @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7 @capacitor/app@7 @capacitor/splash-screen@7 @capacitor/filesystem@7 @capacitor/share@7
 
       - name: Create Android project
         run: |
           npx cap add android
           npx cap sync android
+
+      - name: Verify the plugins made it into the APK project
+        run: |
+          cat android/app/src/main/assets/capacitor.plugins.json
+          for p in App SplashScreen Filesystem Share; do
+            grep -q "\"name\": *\"$p\"" android/app/src/main/assets/capacitor.plugins.json || grep -q "\"$p\"" android/app/src/main/assets/capacitor.plugins.json || { echo "Plugin $p missing"; exit 1; }
+          done
 
       - name: Dark launch screen (no white flash, no Capacitor logo)
         run: |
