@@ -1,0 +1,30 @@
+/* Android-app-only overrides, linked into the APK's index.html by .github/workflows/android.yml.
+ * Unlayered on purpose: it wins over the app's @layer rules without touching the desktop or web builds. */
+
+html, body {
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Export dialog on a phone: the foot was one flex row with the summary, Cancel and a fixed-size round primary, so
+ * "Cancel" ran into "Export MP4". Give the summary its own line and let the two buttons share the next one. */
+:root[data-form="phone"] .ui-export-form > .ui-dialog-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+:root[data-form="phone"] .ui-export-form > .ui-dialog-foot > .ui-dialog-meta {
+  order: -1;
+  flex: 1 0 100%;
+  margin: 0;
+}
+:root[data-form="phone"] .ui-export-form > .ui-dialog-foot > button {
+  flex: 1 1 0;
+  inline-size: auto;
+  min-inline-size: max-content;
+  aspect-ratio: auto;
+  padding-inline: 16px;
+  border-radius: var(--radius-pill, 999px);
+  white-space: nowrap;
+}

@@ -3,6 +3,7 @@
 //     cached copy can shadow a newer APK.
 //  2. Holds the native splash screen until the editor has booted, so the user never
 //     watches a page load. It hides itself after a safety timeout either way.
+// Styling lives in native-shell.css (the page's CSP may not allow injected <style>).
 (function () {
   var cap = window.Capacitor;
   if (!cap || !cap.isNativePlatform || !cap.isNativePlatform()) return;
@@ -25,12 +26,6 @@
         .catch(noop);
     }
   } catch (e) { /* ignore */ }
-
-  // Native-feeling page behaviour.
-  var style = document.createElement('style');
-  style.textContent =
-    'html,body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent}';
-  document.head.appendChild(style);
 
   // 2. Splash screen handover.
   var Splash = cap.Plugins && cap.Plugins.SplashScreen;

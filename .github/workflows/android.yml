@@ -3,7 +3,7 @@ name: Android APK
 on:
   workflow_dispatch:
   push:
-    branches: [android-capacitor]
+    branches: [android-capacitor, android-app-feel]
 
 jobs:
   build:
@@ -27,11 +27,14 @@ jobs:
       - name: Build web bundle
         run: npm run web:build
 
-      - name: Add Android shell scripts (native shell, back button)
+      - name: Add Android shell files (native shell, back button, app-only CSS)
         run: |
           cp android-shell/native-shell.js build/web/native-shell.js
+          cp android-shell/native-shell.css build/web/native-shell.css
           cp android-shell/back-handler.js build/web/back-handler.js
+          sed -i 's#</head>#<link rel="stylesheet" href="native-shell.css"></head>#' build/web/index.html
           sed -i 's#</body>#<script src="native-shell.js"></script><script src="back-handler.js"></script></body>#' build/web/index.html
+          grep -q native-shell.css build/web/index.html
           grep -q native-shell.js build/web/index.html
           grep -q back-handler.js build/web/index.html
 
