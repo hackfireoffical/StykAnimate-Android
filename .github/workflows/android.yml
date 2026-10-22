@@ -27,19 +27,39 @@ jobs:
       - name: Build web bundle
         run: npm run web:build
 
-      - name: Add Android back-button handler
+      - name: Add Android shell scripts (native shell, back button)
         run: |
+          cp android-shell/native-shell.js build/web/native-shell.js
           cp android-shell/back-handler.js build/web/back-handler.js
-          sed -i 's#</body>#<script src="back-handler.js"></script></body>#' build/web/index.html
+          sed -i 's#</body>#<script src="native-shell.js"></script><script src="back-handler.js"></script></body>#' build/web/index.html
+          grep -q native-shell.js build/web/index.html
           grep -q back-handler.js build/web/index.html
 
       - name: Install Capacitor (not saved to package.json)
-        run: npm install --no-save @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7 @capacitor/app@7
+        run: npm install --no-save @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7 @capacitor/app@7 @capacitor/splash-screen@7
 
       - name: Create Android project
         run: |
           npx cap add android
           npx cap sync android
+
+      - name: Dark launch screen (no white flash, no Capacitor logo)
+        run: |
+          python3 - <<'PY'
+          import zlib, struct, glob
+          def chunk(t, d):
+              c = struct.pack('>I', len(d)) + t + d
+              return c + struct.pack('>I', zlib.crc32(t + d) & 0xffffffff)
+          raw = b'\x00' + bytes([0x0c, 0x0e, 0x14])
+          png = (b'\x89PNG\r\n\x1a\n'
+                 + chunk(b'IHDR', struct.pack('>IIBBBBB', 1, 1, 8, 2, 0, 0, 0))
+                 + chunk(b'IDAT', zlib.compress(raw))
+                 + chunk(b'IEND', b''))
+          files = glob.glob('android/app/src/main/res/drawable*/splash.png')
+          for p in files:
+              open(p, 'wb').write(png)
+          print('patched', len(files), 'splash images')
+          PY
 
       - name: Build debug APK
         working-directory: android

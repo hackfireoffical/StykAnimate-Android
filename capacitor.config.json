@@ -2,11 +2,21 @@
   "appId": "com.hackfire.stykdroid",
   "appName": "StykDroid",
   "webDir": "build/web",
+  "backgroundColor": "#0c0e14",
   "server": {
     "androidScheme": "https"
   },
   "android": {
     "allowMixedContent": false,
     "adjustMarginsForEdgeToEdge": "force"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": false,
+      "launchShowDuration": 0,
+      "backgroundColor": "#0c0e14",
+      "androidScaleType": "CENTER_CROP",
+      "showSpinner": false
+    }
   }
 }
