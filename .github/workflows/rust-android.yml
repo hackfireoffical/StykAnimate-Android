@@ -1,0 +1,39 @@
+name: Rust Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [rust-prototype]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: rust
+
+      - name: Install cargo-apk
+        run: cargo install cargo-apk --locked
+
+      - name: Make sure the SDK platform is present
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-34" "build-tools;34.0.0" || true
+
+      - name: Build debug APK
+        working-directory: rust
+        env:
+          ANDROID_NDK_ROOT: ${{ env.ANDROID_NDK_LATEST_HOME }}
+          ANDROID_NDK_HOME: ${{ env.ANDROID_NDK_LATEST_HOME }}
+        run: cargo apk build --lib
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: stykanimate-rust-apk
+          path: rust/target/debug/apk/*.apk

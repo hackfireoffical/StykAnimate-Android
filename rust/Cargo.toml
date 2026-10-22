@@ -1,0 +1,33 @@
+[package]
+name = "stykanimate-rust"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+name = "stykanimate_rust"
+crate-type = ["cdylib"]
+
+[dependencies]
+eframe = { version = "0.31", default-features = false, features = ["android-native-activity", "glow", "default_fonts"] }
+winit = { version = "0.30", features = ["android-native-activity"] }
+log = "0.4"
+
+[target.'cfg(target_os = "android")'.dependencies]
+android_logger = "0.14"
+
+# egui is slow unoptimised, and cargo-apk builds the debug profile.
+[profile.dev]
+opt-level = 2
+
+[package.metadata.android]
+package = "com.hackfire.stykanimate.rust"
+apk_name = "StykAnimateRust"
+build_targets = ["aarch64-linux-android"]
+
+[package.metadata.android.sdk]
+min_sdk_version = 26
+target_sdk_version = 34
+
+[package.metadata.android.application]
+label = "StykAnimate (Rust)"
