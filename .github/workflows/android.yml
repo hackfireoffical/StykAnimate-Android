@@ -49,11 +49,14 @@ jobs:
           npx cap add android
           npx cap sync android
 
+      # capacitor.plugins.json lists each plugin by npm package ("pkg") and Java class.
       - name: Verify the plugins made it into the APK project
         run: |
-          cat android/app/src/main/assets/capacitor.plugins.json
-          for p in App SplashScreen Filesystem Share; do
-            grep -q "\"name\": *\"$p\"" android/app/src/main/assets/capacitor.plugins.json || grep -q "\"$p\"" android/app/src/main/assets/capacitor.plugins.json || { echo "Plugin $p missing"; exit 1; }
+          f=android/app/src/main/assets/capacitor.plugins.json
+          cat "$f"
+          echo
+          for p in app splash-screen filesystem share; do
+            grep -q "@capacitor/$p" "$f" || { echo "Plugin @capacitor/$p is missing from $f"; exit 1; }
           done
 
       - name: Dark launch screen (no white flash, no Capacitor logo)
