@@ -39,7 +39,7 @@ jobs:
           grep -q back-handler.js build/web/index.html
 
       - name: Install Capacitor (not saved to package.json)
-        run: npm install --no-save @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7 @capacitor/app@7 @capacitor/splash-screen@7
+        run: npm install --no-save @capacitor/core@7 @capacitor/cli@7 @capacitor/android@7 @capacitor/app@7 @capacitor/splash-screen@7 @capacitor/filesystem@7 @capacitor/share@7
 
       - name: Create Android project
         run: |
