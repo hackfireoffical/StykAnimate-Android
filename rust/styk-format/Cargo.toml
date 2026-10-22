@@ -1,0 +1,13 @@
+[package]
+name = "styk-format"
+version = "0.1.0"
+edition = "2021"
+publish = false
+description = "Reader for StykAnimate .styk / .stkz / .stykmov containers (versions 1 and 2)"
+
+[dependencies]
+base64 = "0.22"
+flate2 = "1"
+ruzstd = "0.7"
+serde_json = "1"
+sha2 = "0.10"

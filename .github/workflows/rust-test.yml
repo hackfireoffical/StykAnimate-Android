@@ -1,0 +1,20 @@
+name: Rust format tests
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [rust-prototype]
+    paths: ["rust/styk-format/**", ".github/workflows/rust-test.yml"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: rust/styk-format
+      - name: Test the .styk reader
+        working-directory: rust/styk-format
+        run: cargo test --all-targets
