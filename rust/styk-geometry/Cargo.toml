@@ -1,0 +1,12 @@
+[package]
+name = "styk-geometry"
+version = "0.1.0"
+edition = "2021"
+publish = false
+description = "Turns a StykAnimate keyframe pose into drawable lines, circles and polygons"
+
+[dependencies]
+styk-scene = { path = "../styk-scene" }
+
+[dev-dependencies]
+serde_json = "1"
