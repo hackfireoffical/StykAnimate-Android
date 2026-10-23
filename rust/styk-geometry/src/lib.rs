@@ -428,6 +428,7 @@ mod tests {
     fn colour_mixing() {
         assert_eq!(mix_color([100, 100, 100], 0), [100, 100, 100]);
         assert_eq!(mix_color([100, 100, 100], (255 << 24) | (30 << 16) | (20 << 8) | 10), [10, 20, 30]);
-        assert_eq!(mix_color([100, 100, 100], (128 << 24) | 10), [55, 100, 100]);
+        // Half way from 100 toward the override channels (10, 0, 0).
+        assert_eq!(mix_color([100, 100, 100], (128 << 24) | 10), [55, 50, 50]);
     }
 }
