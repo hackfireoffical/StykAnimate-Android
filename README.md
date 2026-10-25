@@ -13,30 +13,6 @@
 
 > **Status:** work in progress. This is a personal fork, built and tested on a phone. Expect rough edges.
 
-## What this is
-
-StykDroid wraps the StykAnimate editor in a Capacitor Android app and tunes it to feel like a real app instead of a web page in a frame: edge-to-edge layout that stays out of the status and navigation bars, a proper Android back button (closes dialogs, steps back through the app, double-press to exit), and a phone-friendly layout for the export footer and other screens.
-
-In parallel, there is an experimental native Rust version built on egui. It is not usable yet.
-
-## Branches
-
-| Branch | What it is |
-| --- | --- |
-| `main` | Upstream StykAnimate code plus this README |
-| `android-capacitor` | The Capacitor Android wrapper and APK build workflow |
-| `android-app-feel` | Native-feel work on the WebView app: back button, insets, mobile CSS |
-| `rust-prototype` | Native Rust/egui prototype (`styk-format`, `styk-scene`, `styk-geometry` crates) |
-
-## Get the APK
-
-There are no store releases yet. Builds come from GitHub Actions:
-
-1. Open the [Actions tab](https://github.com/hackfireoffical/StykAnimate-Android/actions).
-2. Pick the latest successful **Android APK** run.
-3. Download the APK from the run's artifacts (GitHub requires you to be signed in).
-4. Install it on your phone. You may need to allow installs from your browser or file manager.
-
 ## Features (from StykAnimate)
 
 - **Pose stick figures** with fixed-length joints, IK for arms and legs, stretchy nodes and 3D figures with depth.
