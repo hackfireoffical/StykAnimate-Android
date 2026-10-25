@@ -1,61 +1,67 @@
-<p align="center">
-  <img src="assets/brand/svg/stykanimate-horizontal-primary.svg" alt="StykAnimate" width="420">
-</p>
+<h1 align="center">StykDroid</h1>
 
 <p align="center">
-  A free, open-source stick figure animation app for Windows, Linux and the browser.<br>
+  An unofficial Android port of <a href="https://stykanimate.com">StykAnimate</a>, the free, open-source stick figure animation app.<br>
   Opens Pivot (<code>.piv</code>, <code>.stk</code>) and Stick Nodes projects, and keeps your work on your device.
 </p>
 
 <p align="center">
-  <a href="https://stykanimate.com">Website</a> ·
-  <a href="https://app.stykanimate.com">Open in the browser</a> ·
-  <a href="https://github.com/filippocalippo/styk-animate-releases/releases/latest">Download</a> ·
-  <a href="https://discord.gg/WTssQKBaJp">Discord</a> ·
-  <a href="https://www.youtube.com/channel/UCZg7hZc23PNufzxnX8mCaCw">YouTube</a>
+  <a href="https://github.com/hackfireoffical/StykAnimate-Android/actions">Builds</a> ·
+  <a href="https://stykanimate.com">Upstream website</a> ·
+  <a href="https://github.com/filippocalippo/StykAnimate-App">Upstream repo</a>
 </p>
 
-## Features
+> **Status:** work in progress. This is a personal fork, built and tested on a phone. Expect rough edges.
+
+## What this is
+
+StykDroid wraps the StykAnimate editor in a Capacitor Android app and tunes it to feel like a real app instead of a web page in a frame: edge-to-edge layout that stays out of the status and navigation bars, a proper Android back button (closes dialogs, steps back through the app, double-press to exit), and a phone-friendly layout for the export footer and other screens.
+
+In parallel, there is an experimental native Rust version built on egui. It is not usable yet.
+
+## Branches
+
+| Branch | What it is |
+| --- | --- |
+| `main` | Upstream StykAnimate code plus this README |
+| `android-capacitor` | The Capacitor Android wrapper and APK build workflow |
+| `android-app-feel` | Native-feel work on the WebView app: back button, insets, mobile CSS |
+| `rust-prototype` | Native Rust/egui prototype (`styk-format`, `styk-scene`, `styk-geometry` crates) |
+
+## Get the APK
+
+There are no store releases yet. Builds come from GitHub Actions:
+
+1. Open the [Actions tab](https://github.com/hackfireoffical/StykAnimate-Android/actions).
+2. Pick the latest successful **Android APK** run.
+3. Download the APK from the run's artifacts (GitHub requires you to be signed in).
+4. Install it on your phone. You may need to allow installs from your browser or file manager.
+
+## Features (from StykAnimate)
 
 - **Pose stick figures** with fixed-length joints, IK for arms and legs, stretchy nodes and 3D figures with depth.
 - **Build your own figures** from lines, circles, polygons, text and images, with a shared rig and per-part styles.
 - **Two timelines:** a Simple, Pivot-style frame strip and an Advanced timeline with layers, folders, keys and easing.
 - **Motion paths, onion skins and camera moves,** including camera follow.
 - **Particle effects** (explosions, auras, beams, smoke) and brushes for drawing.
-- **Community library:** insert figures and movieclips shared by other animators.
 - **Export** MP4, WebM (with transparency), GIF, APNG, PNG/JPEG/SVG frames, and editable `.piv`/`.stk`.
-- **27 interface languages**, light and dark themes, a touch interface for phones and tablets.
+- **27 interface languages**, light and dark themes, and a touch interface for phones and tablets.
 
-Everything (decoding, editing, saving and rendering) runs locally. Optional, consent-based diagnostics are described in [docs/telemetry.md](docs/telemetry.md).
-
-## Get StykAnimate
-
-- **Windows and Linux:** download Setup, Portable or the AppImage from the [releases page](https://github.com/filippocalippo/styk-animate-releases/releases/latest). Installed apps update themselves.
-- **Browser:** open [app.stykanimate.com](https://app.stykanimate.com). It works offline once loaded.
+Everything (decoding, editing, saving and rendering) runs locally. Upstream's optional, consent-based diagnostics are described in [docs/telemetry.md](docs/telemetry.md).
 
 ## Build from source
 
-Requirements: Node.js 22+ (CI uses 24.11) and Python 3.11+ (CI uses 3.12). Windows and Linux are tested on every change; macOS has an untested build target.
+Android builds run in CI (`.github/workflows/android.yml`), so you don't need a PC. The workflow installs the Capacitor plugins, syncs, and builds the APK.
+
+To run the editor itself:
 
 ```sh
 npm ci
 python -m pip install -r backend/requirements-fast.txt
-npm start            # desktop app (Electron)
-npm run serve        # or the editor in your browser at http://127.0.0.1:47831
+npm run serve        # the editor in your browser at http://127.0.0.1:47831
 ```
 
-Set `STYK_PYTHON` to choose a Python interpreter. Optional native helpers speed up large imports (`npm run build:frame-scan`); the Python fallbacks always work.
-
-Packaging, on the matching operating system:
-
-```sh
-python -m pip install -r scripts/requirements-build.txt
-npm run build:sidecar
-npm run pack && npm run verify:package
-npm run dist:win     # or dist:linux, dist:mac
-```
-
-The browser build: `npm run web:build`, then `npm run web:preview`. See [Web build](docs/WEB.md), [Linux](docs/LINUX.md) and [Touch interface](docs/TOUCH.md).
+Requirements: Node.js 22+ and Python 3.11+. See [Web build](docs/WEB.md) and [Touch interface](docs/TOUCH.md). The desktop (Electron) build still exists from upstream: `npm start`.
 
 ## Tests
 
@@ -65,29 +71,15 @@ npm test             # unit tests
 python -m unittest discover -s backend -p "test_*.py"
 ```
 
-Browser tests (`tests/*.browser.mjs`) run against `npm run serve` with Chrome or Playwright Chromium, for example `node tests/timeline.browser.mjs`. Some tests read a local corpus of Pivot projects that is not distributed; they skip and name the missing file. [`.github/workflows/ci.yml`](.github/workflows/ci.yml) shows what runs on every pull request.
+For the Rust prototype, the `Rust format tests` workflow runs the crate tests on `rust-prototype`.
 
-## How the code is organized
+## Credits
 
-| Location | Responsibility |
-| --- | --- |
-| `src/editor*.mjs`, `src/pivot/` | Document model, commands, undo/redo, rigs, native evaluation and validation |
-| `src/renderer*.mjs`, `src/prepared-frames.mjs` | WebGPU rendering, incremental edits, GPU playback packets |
-| `src/playback*.mjs`, `src/document-transport.mjs` | Worker evaluation, playback caches, bounded document snapshots |
-| `src/import-*.mjs`, `backend/`, `codecs/`, `native/` | Pivot and Stick Nodes decoding, the Python codec service, native helpers |
-| `src/document-export*.mjs`, `src/image-*.mjs`, `src/video-export.mjs` | Saving, recovery and image/video export |
-| `src/app.mjs`, `src/shell/`, `src/ui/`, `src/styles/` | Interface, workspaces, timelines and styles |
-| `src/locales/`, `src/localization*.mjs` | Translations |
-| `desktop/` | Electron main process, preload bridge, file access, updates |
-| `web/` | Browser build: service worker and Cloudflare configuration |
-| `tests/`, `scripts/` | Tests, smoke tests, benchmarks, build and release scripts |
-| `docs/` | Feature contracts and architecture |
-
-Start with [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). Feature behavior is documented in `docs/`, for example [the timeline](docs/TIMELINE.md), [scene editing](docs/SCENE-EDITING.md) and [the renderer](docs/renderer.md).
+StykDroid is a fork of [filippocalippo/StykAnimate-App](https://github.com/filippocalippo/StykAnimate-App). All the animation editor work is theirs. This fork only adds the Android packaging and mobile polish.
 
 ## Contributing
 
-Bug reports, ideas, translations and pull requests are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) first, and follow the [Code of Conduct](CODE_OF_CONDUCT.md). Report security problems privately as described in [SECURITY.md](SECURITY.md).
+Bug reports and pull requests are welcome. Upstream's [CONTRIBUTING.md](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCT.md) apply. Report security problems privately as described in [SECURITY.md](SECURITY.md).
 
 ## License
 
@@ -95,6 +87,6 @@ StykAnimate is free software: you can redistribute it and/or modify it under the
 
 ## Trademarks
 
-The StykAnimate name and logo identify the official project. The GPL lets you fork and redistribute the code, but please give modified versions a different name and icon so people can tell them apart from official releases.
+StykDroid is an unofficial fork and is not the official StykAnimate release. The StykAnimate name and logo identify the official project, so this fork uses its own name and does not use the official logo.
 
 StykAnimate is an independent project. It is not affiliated with or endorsed by Pivot Animator or Stick Nodes; those names are used only to describe file compatibility.
